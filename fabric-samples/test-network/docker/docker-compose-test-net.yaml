@@ -184,7 +184,7 @@ services:
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:12052
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org4.example.com:12051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org4.example.com:12051
-      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_LOCALMSPID=Org4MSP
     volumes:
         - /var/run/docker.sock:/host/var/run/docker.sock
         - ../organizations/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/msp:/etc/hyperledger/fabric/msp
@@ -216,5 +216,7 @@ services:
     depends_on:
       - peer0.org1.example.com
       - peer0.org2.example.com
+      - peer0.org3.example.com
+      - peer0.org4.example.com
     networks:
       - test
