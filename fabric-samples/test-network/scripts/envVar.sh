@@ -12,10 +12,30 @@
 
 export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+# Declare env variables for initial peer in all organizations
 export PEER0_ORG1_CA=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
 export PEER0_ORG2_CA=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 export PEER0_ORG3_CA=${PWD}/organizations/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
 export PEER0_ORG4_CA=${PWD}/organizations/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls/ca.crt
+
+# Declare env variables for 2nd peer in all organizations
+export PEER1_ORG1_CA=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt
+export PEER1_ORG2_CA=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt
+export PEER1_ORG3_CA=${PWD}/organizations/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt
+export PEER1_ORG4_CA=${PWD}/organizations/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/tls/ca.crt
+
+# Declare env variables for 3rd peer in all organizations
+export PEER2_ORG1_CA=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer2.org1.example.com/tls/ca.crt
+export PEER2_ORG2_CA=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer2.org2.example.com/tls/ca.crt
+export PEER2_ORG3_CA=${PWD}/organizations/peerOrganizations/org3.example.com/peers/peer2.org3.example.com/tls/ca.crt
+export PEER2_ORG4_CA=${PWD}/organizations/peerOrganizations/org4.example.com/peers/peer2.org4.example.com/tls/ca.crt
+
+# Declare env variables for 4th peer in all organizations
+export PEER3_ORG1_CA=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer3.org1.example.com/tls/ca.crt
+export PEER3_ORG2_CA=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer3.org2.example.com/tls/ca.crt
+export PEER3_ORG3_CA=${PWD}/organizations/peerOrganizations/org3.example.com/peers/peer3.org3.example.com/tls/ca.crt
+export PEER3_ORG4_CA=${PWD}/organizations/peerOrganizations/org4.example.com/peers/peer3.org4.example.com/tls/ca.crt
 
 # Set environment variables for the peer org
 setGlobals() {
@@ -54,6 +74,38 @@ setGlobals() {
     env | grep CORE
   fi
 }
+
+setGlobalsIncludingPeers() {
+  local USING_ORG=""
+  local PEER_PORT=$2
+  if [ -z "$OVERRIDE_ORG" ]; then
+    USING_ORG=$1
+  else
+    USING_ORG="${OVERRIDE_ORG}"
+  fi
+  infoln "Using organization ${USING_ORG}"
+
+  export CORE_PEER_LOCALMSPID="Org${USING_ORG}MSP"
+  if [ $USING_ORG -eq 1 ]; then
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG1_CA
+  elif [ $USING_ORG -eq 2 ]; then
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG2_CA
+  elif [ $USING_ORG -eq 3 ]; then
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG3_CA
+  elif [ $USING_ORG -eq 4 ]; then
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG4_CA
+  else
+    errorln "ORG Unknown"
+  fi
+
+  export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org${USING_ORG}.example.com/users/Admin@org${USING_ORG}.example.com/msp
+  export CORE_PEER_ADDRESS=localhost:${PEER_PORT}
+
+  if [ "$VERBOSE" == "true" ]; then
+    env | grep CORE
+  fi
+}
+
 
 # Set environment variables for use in the CLI container 
 setGlobalsCLI() {

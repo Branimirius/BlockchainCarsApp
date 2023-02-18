@@ -13,6 +13,10 @@ VERBOSE="$4"
 : ${MAX_RETRY:="5"}
 : ${VERBOSE:="false"}
 
+: ${CONTAINER_CLI:="docker"}
+: ${CONTAINER_CLI_COMPOSE:="${CONTAINER_CLI}-compose"}
+infoln "Using ${CONTAINER_CLI} and ${CONTAINER_CLI_COMPOSE}"
+
 if [ ! -d "channel-artifacts" ]; then
 	mkdir channel-artifacts
 fi
@@ -64,6 +68,28 @@ joinChannel() {
 	verifyResult $res "After $MAX_RETRY attempts, peer0.org${ORG} has failed to join channel '$CHANNEL_NAME' "
 }
 
+joinChannelIncludingPeers() {
+  FABRIC_CFG_PATH=$PWD/../config/
+  ORG=$1
+  PEER=$2
+  PEER_PORT=$3
+  setGlobalsIncludingPeers $ORG $PEER_PORT
+	local rc=1
+	local COUNTER=1
+	## Sometimes Join takes time, hence retry
+	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
+    sleep $DELAY
+    set -x
+    peer channel join -b $BLOCKFILE >&log.txt
+    res=$?
+    { set +x; } 2>/dev/null
+		let rc=$res
+		COUNTER=$(expr $COUNTER + 1)
+	done
+	cat log.txt
+	verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel '$CHANNEL_NAME' "
+}
+
 setAnchorPeer() {
   ORG=$1
   docker exec cli ./scripts/setAnchorPeer.sh $ORG $CHANNEL_NAME 
@@ -84,14 +110,41 @@ createChannel
 successln "Channel '$CHANNEL_NAME' created"
 
 ## Join all the peers to the channel
-infoln "Joining org1 peer to the channel..."
+infoln "Joining org1 peer0 to the channel..."
 joinChannel 1
-infoln "Joining org2 peer to the channel..."
+infoln "Joining org2 peer0 to the channel..."
 joinChannel 2
-infoln "Joining org3 peer to the channel..."
+infoln "Joining org3 peer0 to the channel..."
 joinChannel 3
-infoln "Joining org4 peer to the channel..."
+infoln "Joining org4 peer0 to the channel..."
 joinChannel 4
+
+infoln "Joining org1 peer1 to the channel..."
+joinChannelIncludingPeers 1 1 7151
+infoln "Joining org2 peer1 to the channel..."
+joinChannelIncludingPeers 2 1 9151
+infoln "Joining org3 peer1 to the channel..."
+joinChannelIncludingPeers 3 1 11151
+infoln "Joining org4 peer1 to the channel..."
+joinChannelIncludingPeers 4 1 12151
+
+infoln "Joining org1 peer1 to the channel..."
+joinChannelIncludingPeers 1 2 7251
+infoln "Joining org2 peer1 to the channel..."
+joinChannelIncludingPeers 2 2 9251
+infoln "Joining org3 peer1 to the channel..."
+joinChannelIncludingPeers 3 2 11251
+infoln "Joining org4 peer1 to the channel..."
+joinChannelIncludingPeers 4 2 12251
+
+infoln "Joining org1 peer1 to the channel..."
+joinChannelIncludingPeers 1 3 7351
+infoln "Joining org2 peer1 to the channel..."
+joinChannelIncludingPeers 2 3 9351
+infoln "Joining org3 peer1 to the channel..."
+joinChannelIncludingPeers 3 3 11351
+infoln "Joining org4 peer1 to the channel..."
+joinChannelIncludingPeers 4 3 12351
 
 ## Set the anchor peers for each org in the channel
 infoln "Setting anchor peer for org1..."

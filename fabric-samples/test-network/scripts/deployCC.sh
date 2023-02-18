@@ -132,6 +132,20 @@ installChaincode() {
   successln "Chaincode is installed on peer0.org${ORG}"
 }
 
+installChaincodeIncludingPeers() {
+  ORG=$1
+  PEER=$2
+  PEER_PORT=$3
+  setGlobalsIncludingPeers $ORG $PEER_PORT
+  set -x
+  peer lifecycle chaincode install ${CC_NAME}.tar.gz >&log.txt
+  res=$?
+  { set +x; } 2>/dev/null
+  cat log.txt
+  verifyResult $res "Chaincode installation on peer${PEER}.org${ORG} has failed"
+  successln "Chaincode is installed on peer${PEER}.org${ORG}"
+}
+
 # queryInstalled PEER ORG
 queryInstalled() {
   ORG=$1
@@ -285,15 +299,45 @@ chaincodeQuery() {
 ## package the chaincode
 packageChaincode
 
-## Install chaincode on peer0.org1 and peer0.org2
+## Install chaincode on all Organizations peer0
 infoln "Installing chaincode on peer0.org1..."
-installChaincode 1
+installChaincodeIncludingPeers 1 0 7051
 infoln "Install chaincode on peer0.org2..."
-installChaincode 2
+installChaincodeIncludingPeers 2 0 9051
 infoln "Install chaincode on peer0.org3..."
-installChaincode 3
+installChaincodeIncludingPeers 3 0 11051
 infoln "Install chaincode on peer0.org4..."
-installChaincode 4
+installChaincodeIncludingPeers 4 0 12051
+
+## Install chaincode on all Organizations peer1
+infoln "Installing chaincode on peer1.org1..."
+installChaincodeIncludingPeers 1 1 7151
+infoln "Install chaincode on peer1.org2..."
+installChaincodeIncludingPeers 2 1 9151
+infoln "Install chaincode on peer1.org3..."
+installChaincodeIncludingPeers 3 1 11151
+infoln "Install chaincode on peer1.org4..."
+installChaincodeIncludingPeers 4 1 12151
+
+## Install chaincode on all Organizations peer2
+infoln "Installing chaincode on peer2.org1..."
+installChaincodeIncludingPeers 1 2 7251
+infoln "Install chaincode on peer2.org2..."
+installChaincodeIncludingPeers 2 2 9251
+infoln "Install chaincode on peer2.org3..."
+installChaincodeIncludingPeers 3 2 11251
+infoln "Install chaincode on peer2.org4..."
+installChaincodeIncludingPeers 4 2 12251
+
+## Install chaincode on all Organizations peer3
+infoln "Installing chaincode on peer3.org1..."
+installChaincodeIncludingPeers 1 3 7351
+infoln "Install chaincode on peer3.org2..."
+installChaincodeIncludingPeers 2 3 9351
+infoln "Install chaincode on peer3.org3..."
+installChaincodeIncludingPeers 3 3 11351
+infoln "Install chaincode on peer3.org4..."
+installChaincodeIncludingPeers 4 3 12351
 
 ## query whether the chaincode is installed
 queryInstalled 1
