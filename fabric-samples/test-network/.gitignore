@@ -3,7 +3,7 @@
 /ledgers
 /ledgers-backup
 /channel-artifacts/*.json
-/org3-artifacts/crypto-config/*
+/org3-artifacts/fig/*
 organizations/fabric-ca/ordererOrg/*
 organizations/fabric-ca/org1/*
 organizations/fabric-ca/org2/*
