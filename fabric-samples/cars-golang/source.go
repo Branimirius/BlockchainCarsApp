@@ -25,18 +25,6 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-// const (
-// 	mspID         = "Org1MSP"
-// 	cryptoPath    = "../test-network/organizations/peerOrganizations/org1.example.com"
-// 	certPath      = cryptoPath + "/users/User1@org1.example.com/msp/signcerts/cert.pem"
-// 	keyPath       = cryptoPath + "/users/User1@org1.example.com/msp/keystore/"
-// 	tlsCertPath   = cryptoPath + "/peers/peer0.org1.example.com/tls/ca.crt"
-// 	peerEndpoint  = "localhost:7051"
-// 	gatewayPeer   = "peer0.org1.example.com"
-// 	channelName   = "mychannel"
-// 	chaincodeName = "basic"
-// )
-
 type AppConfig struct {
 	Orgs          map[string]OrgConfig `json:"orgs"`
 	ChannelName   string               `json:"channelName"`
@@ -83,7 +71,7 @@ func main() {
 	var orgConfig OrgConfig
 
 	fmt.Println("Choose your organization by entering a number:")
-	fmt.Println("1 - org1\n2 - org2\n3 - org3")
+	fmt.Println("1 - org1\n2 - org2\n3 - org3\n4 - org4")
 	fmt.Println("Anything else defaults to 1")
 	var orgOption int
 	fmt.Scanf("%d", &orgOption)
@@ -93,6 +81,8 @@ func main() {
 		orgConfig = orgsConfig["org2"]
 	case 3:
 		orgConfig = orgsConfig["org3"]
+	case 4:
+		orgConfig = orgsConfig["org4"]
 	default:
 		orgConfig = orgsConfig["org1"]
 	}
@@ -125,122 +115,6 @@ func main() {
 
 	network := gateway.GetNetwork(channelName)
 	contract := network.GetContract(chaincodeName)
-
-	//	var option int
-
-	// loop:
-	// 	for {
-	// 		fmt.Println("Choose an option by entering a number:")
-	// 		fmt.Println("0 - Initialize ledger")
-	// 		fmt.Println("1 - Read person asset")
-	// 		fmt.Println("2 - Read car asset")
-	// 		fmt.Println("3 - Get cars by color")
-	// 		fmt.Println("4 - Get cars by color and owner")
-	// 		fmt.Println("5 - Transfer car to another owner")
-	// 		fmt.Println("6 - Add car malfunction")
-	// 		fmt.Println("7 - Change car color")
-	// 		fmt.Println("8 - Repair car")
-	// 		fmt.Println("9 - Exit")
-
-	// 		fmt.Scanf("%d", &option)
-
-	// 		switch option {
-	// 		case 0:
-	// 			fmt.Println("Initializing ledger...")
-	// 			initLedger(contract)
-
-	// 		case 1:
-	// 			fmt.Printf("Enter person ID: ")
-	// 			var personID string
-	// 			fmt.Scanf("%s", &personID)
-	// 			readPersonAsset(contract, personID)
-
-	// 		case 2:
-	// 			fmt.Printf("Enter car ID: ")
-	// 			var carID string
-	// 			fmt.Scanf("%s", &carID)
-	// 			readCarAsset(contract, carID)
-
-	// 		case 3:
-	// 			fmt.Printf("Enter car color: ")
-	// 			var color string
-	// 			fmt.Scanf("%s", &color)
-	// 			getCarsByColor(contract, color)
-
-	// 		case 4:
-	// 			fmt.Printf("Enter car color: ")
-	// 			var color string
-	// 			fmt.Scanf("%s", &color)
-
-	// 			fmt.Printf("Enter car owner: ")
-	// 			var ownerID string
-	// 			fmt.Scanf("%s", &ownerID)
-	// 			getCarsByColorAndOwner(contract, color, ownerID)
-
-	// 		case 5:
-	// 			fmt.Printf("Enter car ID: ")
-	// 			var carID string
-	// 			fmt.Scanf("%s", &carID)
-
-	// 			fmt.Printf("Enter new owner ID: ")
-	// 			var newOwnerID string
-	// 			fmt.Scanf("%s", &newOwnerID)
-
-	// 			fmt.Printf("Does the owner accept malfunctioned car, with a price compensation? (Y/n): ")
-	// 			var acceptMalfunctionedStr string
-	// 			fmt.Scanf("%s", &acceptMalfunctionedStr)
-	// 			var acceptMalfunctionedBool bool
-	// 			if acceptMalfunctionedStr == "n" {
-	// 				acceptMalfunctionedBool = false
-	// 			} else {
-	// 				acceptMalfunctionedBool = true
-	// 			}
-
-	// 			transferCarAsset(contract, carID, newOwnerID, acceptMalfunctionedBool)
-
-	// 		case 6:
-	// 			fmt.Printf("Enter car ID: ")
-	// 			var carID string
-	// 			fmt.Scanf("%s", &carID)
-
-	// 			fmt.Println("Enter malfunction description:")
-	// 			var description string
-	// 			scanner := bufio.NewScanner(os.Stdin)
-	// 			if scanner.Scan() {
-	// 				description = scanner.Text()
-	// 			}
-
-	// 			fmt.Printf("Enter malfunction repair price: ")
-	// 			var repairPrice float32
-	// 			fmt.Scanf("%f", &repairPrice)
-	// 			addCarMalfunction(contract, carID, description, repairPrice)
-
-	// 		case 7:
-	// 			fmt.Printf("Enter car ID: ")
-	// 			var carID string
-	// 			fmt.Scanf("%s", &carID)
-
-	// 			fmt.Printf("Enter new car color: ")
-	// 			var newColor string
-	// 			fmt.Scanf("%s", &newColor)
-	// 			changeCarColor(contract, carID, newColor)
-
-	// 		case 8:
-	// 			fmt.Printf("Enter car ID: ")
-	// 			var carID string
-	// 			fmt.Scanf("%s", &carID)
-	// 			repairCar(contract, carID)
-
-	// 		case 9:
-	// 			fmt.Printf("Exiting...")
-	// 			break loop
-
-	// 		default:
-	// 			fmt.Printf("Invalid input! Please enter a number in the range [1, 9]!")
-	// 		}
-
-	// 		fmt.Printf("\n\n")
-	// 	}
 
 	http.HandleFunc("/initLedger", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Initializing ledger...")
@@ -328,7 +202,7 @@ func main() {
 		}
 		//code here:
 
-		addCarMalfunction(contract, transaction.CarID, transaction.description, transaction.repairPrice)
+		//addCarMalfunction(contract, transaction.CarID, transaction.description, transaction.repairPrice)
 
 		w.WriteHeader(http.StatusOK)
 	})
