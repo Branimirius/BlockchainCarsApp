@@ -251,6 +251,37 @@ queryCommitted() {
   fi
 }
 
+# queryCommitted ORG PEER
+queryCommittedIncludingPeers() {
+  ORG=$1
+  PEER=$2
+  PEER_PORT=$3
+  setGlobals $ORG $PEER_PORT
+  EXPECTED_RESULT="Version: ${CC_VERSION}, Sequence: ${CC_SEQUENCE}, Endorsement Plugin: escc, Validation Plugin: vscc"
+  infoln "Querying chaincode definition on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'..."
+  local rc=1
+  local COUNTER=1
+  # continue to poll
+  # we either get a successful response, or reach MAX RETRY
+  while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ]; do
+    sleep $DELAY
+    infoln "Attempting to Query committed status on peer${PEER}.org${ORG}, Retry after $DELAY seconds."
+    set -x
+    peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME} >&log.txt
+    res=$?
+    { set +x; } 2>/dev/null
+    test $res -eq 0 && VALUE=$(cat log.txt | grep -o '^Version: '$CC_VERSION', Sequence: [0-9]*, Endorsement Plugin: escc, Validation Plugin: vscc')
+    test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
+    COUNTER=$(expr $COUNTER + 1)
+  done
+  cat log.txt
+  if test $rc -eq 0; then
+    successln "Query chaincode definition successful on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'"
+  else
+    fatalln "After $MAX_RETRY attempts, Query chaincode definition result on peer${PEER}.org${ORG} is INVALID!"
+  fi
+}
+
 chaincodeInvokeInit() {
   parsePeerConnectionParameters $@
   res=$?
@@ -391,6 +422,21 @@ queryCommitted 2
 queryCommitted 3
 queryCommitted 4
 
+queryCommittedIncludingPeers 1 1 7151
+queryCommittedIncludingPeers 2 1 9151
+queryCommittedIncludingPeers 3 1 11151
+queryCommittedIncludingPeers 4 1 12151
+
+queryCommittedIncludingPeers 1 2 7251
+queryCommittedIncludingPeers 2 2 9251
+queryCommittedIncludingPeers 3 2 11251
+queryCommittedIncludingPeers 4 2 12251
+
+queryCommittedIncludingPeers 1 3 7351
+queryCommittedIncludingPeers 2 3 9351
+queryCommittedIncludingPeers 3 3 11351
+queryCommittedIncludingPeers 4 3 12351
+ 
 ## Invoke the chaincode - this does require that the chaincode have the 'initLedger'
 ## method defined
 if [ "$CC_INIT_FCN" = "NA" ]; then
