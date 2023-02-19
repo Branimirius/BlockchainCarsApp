@@ -422,20 +422,20 @@ queryCommitted 2
 queryCommitted 3
 queryCommitted 4
 
-queryCommittedIncludingPeers 1 1 7151
-queryCommittedIncludingPeers 2 1 9151
-queryCommittedIncludingPeers 3 1 11151
-queryCommittedIncludingPeers 4 1 12151
+# queryCommittedIncludingPeers 1 1 7151
+# queryCommittedIncludingPeers 2 1 9151
+# queryCommittedIncludingPeers 3 1 11151
+# queryCommittedIncludingPeers 4 1 12151
 
-queryCommittedIncludingPeers 1 2 7251
-queryCommittedIncludingPeers 2 2 9251
-queryCommittedIncludingPeers 3 2 11251
-queryCommittedIncludingPeers 4 2 12251
+# queryCommittedIncludingPeers 1 2 7251
+# queryCommittedIncludingPeers 2 2 9251
+# queryCommittedIncludingPeers 3 2 11251
+# queryCommittedIncludingPeers 4 2 12251
 
-queryCommittedIncludingPeers 1 3 7351
-queryCommittedIncludingPeers 2 3 9351
-queryCommittedIncludingPeers 3 3 11351
-queryCommittedIncludingPeers 4 3 12351
+# queryCommittedIncludingPeers 1 3 7351
+# queryCommittedIncludingPeers 2 3 9351
+# queryCommittedIncludingPeers 3 3 11351
+# queryCommittedIncludingPeers 4 3 12351
  
 ## Invoke the chaincode - this does require that the chaincode have the 'initLedger'
 ## method defined
